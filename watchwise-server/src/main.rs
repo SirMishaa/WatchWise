@@ -1,12 +1,24 @@
+pub mod interactor;
+
+use axum::extract::Query;
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
-use std::net;
+use serde::{de, Deserialize};
+use std::str::FromStr;
+use std::{fmt, net};
 use tower_http::trace;
 use tower_http::trace::TraceLayer;
 use tracing::{info, Level};
 
 static SERVER_ADDRESS: &str = "127.0.0.1:3005";
+
+#[derive(Debug, Deserialize)]
+struct Params {
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    #[allow(dead_code)]
+    query: Option<String>,
+}
 
 #[tokio::main]
 async fn main() {
@@ -15,7 +27,9 @@ async fn main() {
         .compact()
         .init();
 
-    let mut app = Router::new().route("/", get(handle));
+    let mut app = Router::new()
+        .route("/", get(handle))
+        .route("/search", get(search_media));
 
     app = app.layer(
         TraceLayer::new_for_http()
@@ -40,4 +54,28 @@ async fn main() {
 
 async fn handle() -> impl IntoResponse {
     "Hello world"
+}
+
+async fn search_media(Query(params): Query<Params>) -> String {
+    if let Some(search) = params.query {
+        interactor::media::search_media(search, Some(interactor::media::MediaType::Movie)).await
+    } else {
+        "No search query provided".to_string()
+    }
+}
+
+/// Serde deserialization decorator to map empty Strings to None
+fn empty_string_as_none<'de, Deserializer, Type>(
+    deserializer: Deserializer,
+) -> Result<Option<Type>, Deserializer::Error>
+where
+    Deserializer: serde::Deserializer<'de>,
+    Type: FromStr,
+    Type::Err: fmt::Display,
+{
+    let option = Option::<String>::deserialize(deserializer)?;
+    match option.as_deref() {
+        None | Some("") => Ok(None),
+        Some(str) => FromStr::from_str(str).map_err(de::Error::custom).map(Some),
+    }
 }

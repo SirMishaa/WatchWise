@@ -11,3 +11,6 @@ tokio = { version = "1.33.0", features = ["full"] }
 tower-http = { version = "0.4.4", features = ["trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+serde = { version = "1.0.190", features = ["derive"] }
+log = "0.4.20"
+serde_urlencoded = "0.7.1"

@@ -2,4 +2,4 @@
 GET http://{{SERVER_ADDRESS}}/
 
 ### Search for a movie by title
-GET http://{{SERVER_ADDRESS}}/?search=Shining
+GET http://{{SERVER_ADDRESS}}/search?query=Shining
