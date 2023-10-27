@@ -1,1 +1,5 @@
+### Get request on base url
 GET http://{{SERVER_ADDRESS}}/
+
+### Search for a movie by title
+GET http://{{SERVER_ADDRESS}}/?search=Shining
