@@ -2,7 +2,7 @@ use reqwest::header;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::io;
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 type BoxError = Box<dyn std::error::Error>;
 
@@ -89,8 +89,9 @@ pub async fn search_media(
     );
 
     info!("Searching for media on OMD database with term: {}", search);
+    debug!("OMD API URL: {}", url);
 
-    // HTTP request using reqwest and parsing the json response using serde_json.
+    // Todo: Handle case when OMD API do not find any result. Search field will not be there and the response code will be 200 with "Response" field set to "False" 😅
     let result: Result<OMDSearchResult, BoxError> = fetch_data(&url).await;
     match result {
         Ok(response) => {

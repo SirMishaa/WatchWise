@@ -25,6 +25,7 @@ struct Params {
 async fn main() {
     tracing_subscriber::fmt()
         .with_target(false)
+        .with_max_level(tracing::Level::DEBUG)
         .compact()
         .init();
 
