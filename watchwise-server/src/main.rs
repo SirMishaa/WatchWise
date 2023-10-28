@@ -1,9 +1,10 @@
 pub mod interactor;
 
+use crate::interactor::media::OMDSearchResultMedia;
 use axum::extract::Query;
 use axum::response::IntoResponse;
 use axum::routing::get;
-use axum::Router;
+use axum::{Json, Router};
 use serde::{de, Deserialize};
 use std::str::FromStr;
 use std::{fmt, net};
@@ -56,12 +57,14 @@ async fn handle() -> impl IntoResponse {
     "Hello world"
 }
 
-async fn search_media(Query(params): Query<Params>) -> String {
-    if let Some(search) = params.query {
-        interactor::media::search_media(search, Some(interactor::media::MediaType::Movie)).await
-    } else {
-        "No search query provided".to_string()
-    }
+async fn search_media(Query(params): Query<Params>) -> Json<Vec<OMDSearchResultMedia>> {
+    let search_option = params.query.unwrap_or_default();
+    let media_option =
+        interactor::media::search_media(search_option, Some(interactor::media::MediaType::Movie))
+            .await;
+    let media = media_option.unwrap_or_else(Vec::new);
+
+    Json(media)
 }
 
 /// Serde deserialization decorator to map empty Strings to None
