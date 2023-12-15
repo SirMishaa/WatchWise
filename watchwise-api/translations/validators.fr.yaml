@@ -1,0 +1,3 @@
+user:
+    email:
+        already_exists: "L'utilisateur avec l'adresse mail {{ value }} existe déjà"
