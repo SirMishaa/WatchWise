@@ -22,6 +22,7 @@
         "phpstan/extension-installer": "^1.3",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-symfony": "^1.3",
+        "symfony/maker-bundle": "^1.52",
         "symfony/stopwatch": "7.0.*",
         "symfony/web-profiler-bundle": "7.0.*"
     },
